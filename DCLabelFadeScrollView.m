@@ -9,6 +9,7 @@
 #import "DCLabelFadeScrollView.h"
 
 static CGFloat const DCStatusBarHeight = 20.;
+static CGFloat const DCStatusBarFadeOffset = 10.;
 
 @interface UIView (DCRecursiveSubviews)
 @end
@@ -22,8 +23,8 @@ static CGFloat const DCStatusBarHeight = 20.;
   NSMutableArray *result = [NSMutableArray arrayWithCapacity:[[self subviews] count]];
   for (NSUInteger idx = 0; idx < [[self subviews] count]; idx++)
   {
-    id obj = [[self subviews] objectAtIndex:idx];
-    id instance = [obj dc_recursiveSubviews];
+    id subview = [[self subviews] objectAtIndex:idx];
+    id instance = [subview dc_recursiveSubviews];
 
     if (nil != instance)
     {
@@ -45,9 +46,10 @@ static CGFloat const DCStatusBarHeight = 20.;
     if (NO == [view isKindOfClass:[UILabel class]]) return;
 
     UILabel *label = (UILabel *)view;
-    CGRect relativeFrame = [self convertRect:[label frame] toView:[[[UIApplication sharedApplication] windows] firstObject]];
-    CGFloat alpha = MIN(MAX((relativeFrame.origin.y - DCStatusBarHeight / 2.) / DCStatusBarHeight, 0.), 1.);
-    label.alpha = alpha;
+    CGRect labelRelativeFrame = [self convertRect:[label frame] toView:[[[UIApplication sharedApplication] windows] firstObject]];
+    CGFloat labelDistanceRatio = (labelRelativeFrame.origin.y - DCStatusBarFadeOffset) / DCStatusBarHeight;
+
+    label.alpha = MIN(MAX(labelDistanceRatio, 0.), 1.);
   }];
 }
 
