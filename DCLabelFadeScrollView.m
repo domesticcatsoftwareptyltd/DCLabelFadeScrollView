@@ -10,7 +10,6 @@
 
 static CGFloat const DCStatusBarHeight = 20.;
 
-
 @interface UIView (DCRecursiveSubviews)
 @end
 
@@ -36,37 +35,7 @@ static CGFloat const DCStatusBarHeight = 20.;
 
 @end
 
-
-@interface DCLabelFadeScrollView () <UIScrollViewDelegate>
-
-@property (nonatomic, weak) id<UIScrollViewDelegate> realDelegate;
-
-@end
-
 @implementation DCLabelFadeScrollView
-
-- (id)initWithFrame:(CGRect)frame;
-{
-  self = [super initWithFrame:frame];
-  if (self) {
-    [self commonInit];
-  }
-  return self;
-}
-
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-  self = [super initWithCoder:aDecoder];
-  if (self) {
-    [self commonInit];
-  }
-  return self;
-}
-
-- (void)commonInit;
-{
-  [self setDelegate:self];
-}
 
 - (void)updateLabelsAppearance;
 {
@@ -84,41 +53,9 @@ static CGFloat const DCStatusBarHeight = 20.;
 
 #pragma mark - Override
 
-- (void)setDelegate:(id<UIScrollViewDelegate>)delegate;
+- (void)layoutSubviews;
 {
-  [super setDelegate:self];
-  self.realDelegate = delegate != self ? delegate : nil;
-}
-
-- (BOOL)respondsToSelector:(SEL)aSelector;
-{
-  return [super respondsToSelector:aSelector] || [self.realDelegate respondsToSelector:aSelector];
-}
-
-- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector;
-{
-  return [super methodSignatureForSelector:aSelector] ?: [(id)self.realDelegate methodSignatureForSelector:aSelector];
-}
-
-- (void)forwardInvocation:(NSInvocation *)anInvocation;
-{
-  id delegate = self.realDelegate;
-  if ([delegate respondsToSelector:anInvocation.selector])
-  {
-    [anInvocation invokeWithTarget:delegate];
-  }
-}
-
-#pragma mark - UIScrollViewDelegate
-
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView;
-{
-  id<UIScrollViewDelegate> delegate = self.realDelegate;
-  if ([delegate respondsToSelector:_cmd])
-  {
-    [delegate scrollViewDidScroll:scrollView];
-  }
-
+  [super layoutSubviews];
   [self updateLabelsAppearance];
 }
 
